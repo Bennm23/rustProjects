@@ -1,10 +1,12 @@
 extern crate ctrlc;
 extern crate serde;
 
-use std::fs::File;
+use std::fs::{File, OpenOptions};
 use std::io::{Read, Write};
+use std::path::PathBuf;
 
 use bincode::{deserialize, serialize};
+use home::home_dir;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -45,23 +47,34 @@ impl TodoList {
     }
 
     pub fn from_file() -> Self {
-        let fd = File::open("list.bin");
+        let fd = File::open(Self::file_path());
+        println!("Opening File Path = {}", Self::file_path().display());
         match fd {
             Ok(mut f) => {
                 let mut buffer = Vec::new();
                 f.read_to_end(&mut buffer).expect("Failed to read list file to end");
                 deserialize(&buffer).expect("Failed to create list from buffer")
             }
-            Err(_) => {
+            Err(e) => {
                 println!("Serialized List Not Found!");
+                println!("Error = {e}");
                 Self::new()
             }
         }
     }
 
+    fn file_path() -> PathBuf {
+        home_dir().expect("Home Dir Unset").as_path().join(".todolist.bin")
+    }
+
     pub fn save(&self) {
         let bin = serialize(self).expect("Failed to save todo list");
-        let mut file = File::create("list.bin").expect("Failed to create list file");
+        let mut file = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .open(Self::file_path())
+            .expect("Failed To Create List File");
+
         file.write_all(&bin).expect("Failed to write list binary");
     }
 

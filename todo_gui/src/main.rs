@@ -112,6 +112,7 @@ fn build_ui(application: &gtk::Application) {
 
     let todo_list = TodoList::from_file();
     for todo_entry in todo_list.entries() {
+        println!("File Entry Text = {}", todo_entry.text());
         add_entry(
             &list_model,
             todo_entry.text(),
