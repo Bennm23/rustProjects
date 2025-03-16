@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 #tokio = { version = "1.9", features = ["full"] }
+proc_macros = {path = "proc_macros"}
+macros = {path = "macros"}

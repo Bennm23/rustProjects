@@ -1,4 +1,4 @@
-use std::{fs::{self, File, OpenOptions}, io::Write};
+use std::{fs::{File, OpenOptions}, io::Write};
 
 
 pub struct Writer<'a> {
